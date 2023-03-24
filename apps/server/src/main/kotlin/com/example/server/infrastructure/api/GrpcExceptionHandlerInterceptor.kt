@@ -4,8 +4,12 @@ import com.google.rpc.Code
 import com.google.rpc.ErrorInfo
 import io.grpc.*
 import io.grpc.protobuf.StatusProto
+import org.slf4j.LoggerFactory
+import java.util.logging.Logger
 
 object GrpcExceptionHandlerInterceptor : ServerInterceptor {
+    val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun <ReqT : Any, RespT : Any> interceptCall(
         call: ServerCall<ReqT, RespT>, // 서버가 반환한 응답 메시지를 받을 객체
         headers: Metadata, // 통신 메타데이터를 가지는 객체로, 커스터메이징 가능
@@ -29,6 +33,9 @@ object GrpcExceptionHandlerInterceptor : ServerInterceptor {
                     if (status.isOk || rpcStatusCode == Code.UNKNOWN) {
                         return super.close(status, trailers)
                     }
+
+                    // 에러 로그 출력
+                    logger.error(cause?.stackTraceToString())
 
                     /* error details 없이 코드만 반환
                     val translatedStatus = when (cause) {

@@ -1,15 +1,17 @@
 package com.example.server.infrastructure.api
 
-import com.example.libs.grpc.CatalogReply
-import com.example.libs.grpc.CatalogRequest
+import com.example.libs.grpc.CatalogSearchReply
+import com.example.libs.grpc.CatalogSearchRequest
 import com.example.libs.grpc.CatalogServiceGrpcKt
-import com.example.libs.grpc.catalogReply
+import com.example.libs.grpc.catalogSearchReply
 import com.example.server.ServerProperties
 import com.example.server.infrastructure.persistence.Catalog
 import com.example.server.infrastructure.persistence.CatalogRepository
+import com.google.protobuf.Int64Value
 import io.grpc.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
 
 @Component
 class CatalogGrpcServer(
@@ -46,7 +48,7 @@ class CatalogGrpcServer(
         private val catalogRepository: CatalogRepository
     ) : CatalogServiceGrpcKt.CatalogServiceCoroutineImplBase() {
 
-        override suspend fun catalogs(request: CatalogRequest): CatalogReply {
+        override suspend fun getCatalogs(request: CatalogSearchRequest): CatalogSearchReply {
             val response: List<Catalog> = if (request.hasId()) {
                 catalogRepository.findByIdOrNull(request.id)?.let {
                     listOf(it)
@@ -55,20 +57,34 @@ class CatalogGrpcServer(
                 catalogRepository.findAll().toList()
             }
 
-            return catalogReply {
+            return catalogSearchReply {
                 total = response.size.toLong()
-                response.map {
+                response.map { catalog ->
                     this.catalogs.add(
                         com.example.libs.grpc.catalog {
-                            id = it.id!!
-                            name = it.name!!
-                            content = it.content!!
-                            updateDate = it.updateDate!!.toString()
-                            updateId = it.updateId!!
+                            id = catalog.id!!
+                            name = catalog.name!!
+                            content = catalog.content!!
+                            catalog.updateDate?.let { updateDate = it.toString() }
+                            catalog.updateId?.let { updateId = it }
                         }
                     )
                 }
             }
+        }
+
+        override suspend fun createCatalog(request: com.example.libs.grpc.Catalog): Int64Value {
+            return Int64Value.of(
+                catalogRepository.save(
+                    Catalog().apply {
+                        id = request.id
+                        name = request.name
+                        content = request.content
+                        updateDate = request.updateDate?.takeIf { !it.isNullOrBlank() }?.let { OffsetDateTime.parse(it) }
+                        updateId = request.updateId
+                    }
+                ).id!!
+            )
         }
     }
 }
