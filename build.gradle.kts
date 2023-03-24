@@ -47,7 +47,7 @@ subprojects {
 			dependency("io.grpc:grpc-protobuf:$grpcVersion")
 			dependency("io.grpc:grpc-stub:$grpcVersion")
 
-			val grpcKotlinVersion = "1.3.0" // CURRENT_GRPC_KOTLIN_VERSION
+			val grpcKotlinVersion = "1.3.0"
 			dependency("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
 
 			val protobufVersion = "3.21.2"

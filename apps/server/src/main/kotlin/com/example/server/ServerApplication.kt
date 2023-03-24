@@ -13,8 +13,7 @@ class ServerApplication
 
 fun main(args: Array<String>) {
     val ctx = runApplication<ServerApplication>(*args)
-    val port = ctx.getBean(ServerProperties::class.java).port
-    val server = CatalogGrpcServer(port)
+    val server = ctx.getBean(CatalogGrpcServer::class.java)
     server.start()
     server.blockUntilShutdown()
 }

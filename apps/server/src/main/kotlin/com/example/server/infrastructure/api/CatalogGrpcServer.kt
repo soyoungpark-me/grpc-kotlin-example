@@ -4,16 +4,26 @@ import com.example.libs.grpc.CatalogReply
 import com.example.libs.grpc.CatalogRequest
 import com.example.libs.grpc.CatalogServiceGrpcKt
 import com.example.libs.grpc.catalogReply
+import com.example.server.ServerProperties
+import com.example.server.infrastructure.persistence.Catalog
 import com.example.server.infrastructure.persistence.CatalogRepository
 import io.grpc.*
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Component
 
-class CatalogGrpcServer(port: Int) {
+@Component
+class CatalogGrpcServer(
+    serverProperties: ServerProperties,
+    catalogRepository: CatalogRepository
+) {
     val server: Server = ServerBuilder
-        .forPort(port)
+        .forPort(serverProperties.port)
         .addService(
             // Exception 인터셉터 등록
             // CatalogGrpcService 코드가 실행되기 전에 인터셉터에 구현된 내용이 먼저 수행됨
-            ServerInterceptors.intercept(CatalogGrpcService(), GrpcExceptionHandlerInterceptor)
+            ServerInterceptors.intercept(
+                CatalogGrpcService(catalogRepository), GrpcExceptionHandlerInterceptor
+            )
         )
         .build()
 
@@ -33,10 +43,17 @@ class CatalogGrpcServer(port: Int) {
     }
 
     internal class CatalogGrpcService(
-        private val catalogRepository: CatalogRepository = CatalogRepository()
+        private val catalogRepository: CatalogRepository
     ) : CatalogServiceGrpcKt.CatalogServiceCoroutineImplBase() {
+
         override suspend fun catalogs(request: CatalogRequest): CatalogReply {
-            val response = catalogRepository.catalogs()
+            val response: List<Catalog> = if (request.hasId()) {
+                catalogRepository.findByIdOrNull(request.id)?.let {
+                    listOf(it)
+                } ?: throw IllegalArgumentException("Catalog not found. id = ${request.id}")
+            } else {
+                catalogRepository.findAll().toList()
+            }
 
             return catalogReply {
                 total = response.size.toLong()
@@ -45,9 +62,9 @@ class CatalogGrpcServer(port: Int) {
                         com.example.libs.grpc.catalog {
                             id = it.id!!
                             name = it.name!!
-                            content = ""
-                            updateDate = ""
-                            updateId = ""
+                            content = it.content!!
+                            updateDate = it.updateDate!!.toString()
+                            updateId = it.updateId!!
                         }
                     )
                 }

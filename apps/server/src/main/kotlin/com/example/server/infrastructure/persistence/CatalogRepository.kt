@@ -1,13 +1,26 @@
 package com.example.server.infrastructure.persistence
 
-import com.example.libs.domain.Catalog
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import java.time.OffsetDateTime
+import javax.persistence.*
 
 @Repository
-class CatalogRepository {
-    fun catalogs(): List<Catalog> {
-        return (1..1000).map {
-            Catalog(id = it.toLong(), name = "test_${it}")
-        }
-    }
+interface CatalogRepository: CrudRepository<Catalog, Long>
+
+@Entity
+@Table(name = "CATALOG")
+class Catalog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+
+    var name: String? = null
+    var content: String? = null
+
+    @Column(name = "update_date")
+    var updateDate: OffsetDateTime? = OffsetDateTime.now()
+
+    @Column(name = "update_id")
+    var updateId: String? = null
 }
