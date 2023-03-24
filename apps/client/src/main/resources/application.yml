@@ -1,0 +1,11 @@
+server:
+    port: 8000
+grpc:
+    host: "127.0.0.1"
+    port: 8081
+
+feign:
+    client:
+        config:
+            catalogApi:
+                url: localhost:8080

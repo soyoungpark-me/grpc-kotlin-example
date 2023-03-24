@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example";
+option java_outer_classname = "CatalogProto";
+
+service CatalogService {
+  rpc Catalog (CatalogRequest) returns (CatalogReply) {}
+}
+
+message CatalogRequest {
+  string name = 1;
+}
+
+message CatalogReply {
+  int64 total = 1;
+  repeated Catalog catalogs = 2;
+}
+
+message Catalog {
+  int64 id = 1;
+  string name = 2;
+}
