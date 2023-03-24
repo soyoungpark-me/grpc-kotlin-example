@@ -1,15 +1,15 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "com.example";
+option java_package = "com.example.libs.grpc";
 option java_outer_classname = "CatalogProto";
 
 service CatalogService {
-  rpc Catalog (CatalogRequest) returns (CatalogReply) {}
+  rpc Catalogs (CatalogRequest) returns (CatalogReply) {}
 }
 
 message CatalogRequest {
-  string name = 1;
+  optional int64 id = 1;
 }
 
 message CatalogReply {
@@ -20,4 +20,7 @@ message CatalogReply {
 message Catalog {
   int64 id = 1;
   string name = 2;
+  string content = 3;
+  string updateDate = 4;
+  string updateId = 5;
 }

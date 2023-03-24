@@ -1,13 +1,13 @@
 package com.example.server.infrastructure.api
 
-import com.example.CatalogReply
-import com.example.CatalogServiceGrpcKt
-import com.example.catalogReply
+import com.example.libs.grpc.CatalogReply
+import com.example.libs.grpc.CatalogRequest
+import com.example.libs.grpc.CatalogServiceGrpcKt
+import com.example.libs.grpc.catalogReply
 import com.example.server.infrastructure.persistence.CatalogRepository
 import io.grpc.*
-import com.example.CatalogRequest as CatalogRequest1
 
-class CatalogGrpcServer(private val port: Int) {
+class CatalogGrpcServer(port: Int) {
     val server: Server = ServerBuilder
         .forPort(port)
         .addService(
@@ -35,16 +35,19 @@ class CatalogGrpcServer(private val port: Int) {
     internal class CatalogGrpcService(
         private val catalogRepository: CatalogRepository = CatalogRepository()
     ) : CatalogServiceGrpcKt.CatalogServiceCoroutineImplBase() {
-        override suspend fun catalog(request: CatalogRequest1): CatalogReply {
+        override suspend fun catalogs(request: CatalogRequest): CatalogReply {
             val response = catalogRepository.catalogs()
 
             return catalogReply {
                 total = response.size.toLong()
                 response.map {
                     this.catalogs.add(
-                        com.example.catalog {
+                        com.example.libs.grpc.catalog {
                             id = it.id!!
                             name = it.name!!
+                            content = ""
+                            updateDate = ""
+                            updateId = ""
                         }
                     )
                 }
