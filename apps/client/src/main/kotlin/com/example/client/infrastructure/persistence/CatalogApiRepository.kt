@@ -15,10 +15,5 @@ class CatalogApiRepository(
 @FeignClient(qualifier = "catalogApiClient", url = "\${feign.client.config.catalogApi.url}", name = "catalogApi")
 interface CatalogApiFeignClient {
     @PostMapping("/catalogs")
-    fun catalogs(): CatalogResponseDto
+    fun catalogs(): List<Catalog>
 }
-
-data class CatalogResponseDto(
-    val total: Long,
-    val catalogs: List<Catalog>
-)

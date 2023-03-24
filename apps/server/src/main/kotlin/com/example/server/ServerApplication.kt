@@ -1,6 +1,6 @@
 package com.example.server
 
-import com.example.server.infrastructure.api.CatalogGrpcService
+import com.example.server.infrastructure.api.CatalogGrpcServer
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -14,7 +14,7 @@ class ServerApplication
 fun main(args: Array<String>) {
     val ctx = runApplication<ServerApplication>(*args)
     val port = ctx.getBean(ServerProperties::class.java).port
-    val server = CatalogGrpcService(port)
+    val server = CatalogGrpcServer(port)
     server.start()
     server.blockUntilShutdown()
 }

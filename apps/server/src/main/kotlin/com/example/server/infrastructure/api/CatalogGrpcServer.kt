@@ -1,28 +1,26 @@
 package com.example.server.infrastructure.api
 
 import com.example.CatalogReply
-import com.example.CatalogRequest
 import com.example.CatalogServiceGrpcKt
 import com.example.catalogReply
 import com.example.server.infrastructure.persistence.CatalogRepository
-import io.grpc.Server
-import io.grpc.ServerBuilder
+import io.grpc.*
+import com.example.CatalogRequest as CatalogRequest1
 
-class CatalogGrpcService(private val port: Int) {
+class CatalogGrpcServer(private val port: Int) {
     val server: Server = ServerBuilder
         .forPort(port)
-        .addService(CatalogService())
+        .addService(
+            // Exception 인터셉터 등록
+            // CatalogGrpcService 코드가 실행되기 전에 인터셉터에 구현된 내용이 먼저 수행됨
+            ServerInterceptors.intercept(CatalogGrpcService(), GrpcExceptionHandlerInterceptor)
+        )
         .build()
 
     fun start() {
         server.start()
-        println("Server started, listening on $port")
         Runtime.getRuntime().addShutdownHook(
-            Thread {
-                println("*** shutting down gRPC server since JVM is shutting down")
-                this@CatalogGrpcService.stop()
-                println("*** server shut down")
-            }
+            Thread { this@CatalogGrpcServer.stop() }
         )
     }
 
@@ -34,10 +32,10 @@ class CatalogGrpcService(private val port: Int) {
         server.awaitTermination()
     }
 
-    internal class CatalogService(
+    internal class CatalogGrpcService(
         private val catalogRepository: CatalogRepository = CatalogRepository()
     ) : CatalogServiceGrpcKt.CatalogServiceCoroutineImplBase() {
-        override suspend fun catalog(request: CatalogRequest): CatalogReply {
+        override suspend fun catalog(request: CatalogRequest1): CatalogReply {
             val response = catalogRepository.catalogs()
 
             return catalogReply {
