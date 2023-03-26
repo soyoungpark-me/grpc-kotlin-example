@@ -12,5 +12,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.github.openfeign:feign-httpclient")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }

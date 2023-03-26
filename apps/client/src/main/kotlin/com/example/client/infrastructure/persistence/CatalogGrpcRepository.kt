@@ -59,8 +59,6 @@ class CatalogGrpcRepository(
             id = catalog.id!!
             name = catalog.name!!
             content = catalog.content!!
-            catalog.updateDate?.let { updateDate = it.toString() }
-            catalog.updateId?.let { updateId = it }
         }
         val response = stub.createCatalog(request)
 

@@ -3,9 +3,31 @@ server:
 grpc:
     host: "127.0.0.1"
     port: 8081
-
+spring:
+    application:
+        name: grpc-client
+    sleuth:
+        enabled: true
+        baggage:
+            remote-fields:
+                - USER-ID
+            local-fields:
+                - USER-ID
+            correlation-fields:
+                - USER-ID
+        feign:
+            processor:
+                enabled: true
+        http:
+            enabled: true
+        web:
+            enabled: true
 feign:
     client:
         config:
             catalogApi:
                 url: localhost:8080
+
+logging:
+    level:
+        org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

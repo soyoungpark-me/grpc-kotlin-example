@@ -80,7 +80,9 @@ class CatalogGrpcServer(
                         id = request.id
                         name = request.name
                         content = request.content
-                        updateDate = request.updateDate?.takeIf { !it.isNullOrBlank() }?.let { OffsetDateTime.parse(it) }
+                        updateDate = request.updateDate?.takeIf { !it.isNullOrBlank() }
+                            ?.let { OffsetDateTime.parse(it) }
+                            ?: OffsetDateTime.now()
                         updateId = request.updateId
                     }
                 ).id!!

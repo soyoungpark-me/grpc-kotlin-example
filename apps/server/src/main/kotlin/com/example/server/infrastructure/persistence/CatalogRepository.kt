@@ -19,7 +19,7 @@ class Catalog {
     var content: String? = null
 
     @Column(name = "update_date")
-    var updateDate: OffsetDateTime? = OffsetDateTime.now()
+    var updateDate: OffsetDateTime? = null
 
     @Column(name = "update_id")
     var updateId: String? = null

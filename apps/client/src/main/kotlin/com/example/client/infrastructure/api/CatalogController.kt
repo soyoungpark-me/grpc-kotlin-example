@@ -2,7 +2,13 @@ package com.example.client.infrastructure.api
 
 import com.example.client.application.CatalogService
 import com.example.libs.domain.Catalog
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.filter.CommonsRequestLoggingFilter
+
+
+
 
 @RestController
 class CatalogController(
@@ -27,4 +33,17 @@ class CatalogController(
     @GetMapping("/catalogs-api")
     fun catalogsByApi() = catalogService.catalogsByApi()
 
+}
+
+@Configuration
+class RequestLoggingFilterConfig {
+    @Bean
+    fun logFilter(): CommonsRequestLoggingFilter {
+        val filter = CommonsRequestLoggingFilter()
+        filter.setIncludeQueryString(true)
+        filter.setIncludePayload(true)
+        filter.setMaxPayloadLength(10000)
+        filter.setIncludeHeaders(false)
+        return filter
+    }
 }

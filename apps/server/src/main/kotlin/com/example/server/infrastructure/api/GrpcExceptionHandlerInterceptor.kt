@@ -8,14 +8,15 @@ import org.slf4j.LoggerFactory
 import java.util.logging.Logger
 
 object GrpcExceptionHandlerInterceptor : ServerInterceptor {
-    val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun <ReqT : Any, RespT : Any> interceptCall(
         call: ServerCall<ReqT, RespT>, // 서버가 반환한 응답 메시지를 받을 객체
         headers: Metadata, // 통신 메타데이터를 가지는 객체로, 커스터메이징 가능
         next: ServerCallHandler<ReqT, RespT> // 인터셉터 체인의 다음 처리를 수행할 객체
     ): ServerCall.Listener<ReqT> { // 클라이언트로부터 전송된 수신 메시지를 처리할 객체
-        println("[Server Interceptor] Invoke RPC - ${call.methodDescriptor.fullMethodName}")
+        val logger = LoggerFactory.getLogger(this::class.java)
+
+        logger.info("[Server Interceptor] Invoke RPC - ${call.methodDescriptor.fullMethodName}")
 
         return next.startCall(
             // io.grpc.ServerCall의 경우 모든 메소드를 오버라이딩해줘야 함
