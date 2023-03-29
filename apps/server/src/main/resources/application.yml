@@ -6,15 +6,23 @@ grpc:
 spring:
     application:
         name: grpc-server
+    zipkin:
+        base-url: http://localhost:9411
+        service:
+            name: grpc-server
     sleuth:
+        sampler:
+            probability: 1.0
         enabled: true
         baggage:
             remote-fields:
-                - USER-ID
+                - X-USER-ID
             local-fields:
-                - USER-ID
+                - X-USER-ID
             correlation-fields:
-                - USER-ID
+                - X-USER-ID
+        grpc:
+              enabled: true
     h2:
         console:
             enabled: true

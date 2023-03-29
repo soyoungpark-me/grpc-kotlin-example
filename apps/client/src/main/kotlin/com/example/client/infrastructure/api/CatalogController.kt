@@ -7,9 +7,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.filter.CommonsRequestLoggingFilter
 
-
-
-
 @RestController
 class CatalogController(
     private val catalogService: CatalogService

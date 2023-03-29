@@ -1,24 +1,40 @@
 package com.example.client.infrastructure.persistence
 
-import com.example.libs.domain.Catalog
+import brave.Tracing
+import brave.grpc.GrpcTracing
 import com.example.client.ClientProperties
+import com.example.libs.domain.Catalog
 import com.example.libs.grpc.CatalogServiceGrpc
 import com.example.libs.grpc.CatalogServiceGrpcKt
 import com.example.libs.grpc.catalogSearchRequest
 import io.grpc.ManagedChannelBuilder
+import org.springframework.cloud.sleuth.brave.instrument.grpc.TracingManagedChannelBuilderCustomizer
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
 
 @Repository
 class CatalogGrpcRepository(
-    clientProperties: ClientProperties
+    clientProperties: ClientProperties,
+    tracing: Tracing
 ) {
-    private val channel = ManagedChannelBuilder.forTarget("${clientProperties.host}:${clientProperties.port}")
-        .usePlaintext()
-        .build()
+    private lateinit var stub: CatalogServiceGrpc.CatalogServiceBlockingStub
+    private lateinit var asyncStub: CatalogServiceGrpcKt.CatalogServiceCoroutineStub
 
-    private val stub = CatalogServiceGrpc.newBlockingStub(channel)
-    private val asyncStub = CatalogServiceGrpcKt.CatalogServiceCoroutineStub(channel)
+    init {
+        val builder = ManagedChannelBuilder
+            .forAddress(clientProperties.host, clientProperties.port)
+            .intercept(GrpcHeaderInterceptor())
+            .usePlaintext()
+
+        TracingManagedChannelBuilderCustomizer(
+            GrpcTracing.create(tracing)
+        ).customize(builder)
+
+        val channel = builder.build()
+
+        stub = CatalogServiceGrpc.newBlockingStub(channel)
+        asyncStub = CatalogServiceGrpcKt.CatalogServiceCoroutineStub(channel)
+    }
 
     fun catalogs(catalogId: Long?): List<Catalog> {
         val request = catalogSearchRequest {

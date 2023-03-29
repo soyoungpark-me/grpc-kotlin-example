@@ -69,6 +69,8 @@ subprojects {
 	}
 	dependencies {
 		implementation("org.jetbrains.kotlin:kotlin-reflect")
+		implementation("org.springframework.cloud:spring-cloud-sleuth-zipkin")
+		implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
 	}
 
 	tasks.withType<KotlinCompile> {
@@ -100,23 +102,3 @@ project(":apps") {
 		}
 	}
 }
-
-//protobuf {
-//    protoc {
-//        artifact = "com.google.protobuf:protoc:3.14.0"
-//    }
-//    generatedFilesBaseDir = "$projectDir/src/generated"
-//    clean {
-//        delete generatedFilesBaseDir
-//    }
-//    plugins {
-//        grpc {
-//            artifact = "io.grpc:protoc-gen-grpc-java:1.35.0"
-//        }
-//    }
-//    generateProtoTasks {
-//        all()*.plugins {
-//            grpc{}
-//        }
-//    }
-//}

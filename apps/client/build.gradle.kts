@@ -10,8 +10,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("io.github.openfeign:feign-httpclient")
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("io.github.openfeign:feign-httpclient")
+    implementation("io.zipkin.brave:brave-instrumentation-grpc")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
