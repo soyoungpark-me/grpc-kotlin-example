@@ -20,6 +20,10 @@ class AuditService(
             return getTraceBaggageValue(idBaggageFieldName)
         }
 
+    fun getAuditId(): String? {
+        return getTraceBaggageValue(idBaggageFieldName)
+    }
+
     private fun getTraceBaggageValue(baggageName: String): String? {
         return tracer.getBaggage(baggageName)?.get()
     }

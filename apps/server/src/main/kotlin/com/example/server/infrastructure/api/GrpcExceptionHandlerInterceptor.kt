@@ -4,9 +4,10 @@ import com.google.rpc.Code
 import com.google.rpc.ErrorInfo
 import io.grpc.*
 import io.grpc.protobuf.StatusProto
+import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor
 import org.slf4j.LoggerFactory
-import java.util.logging.Logger
 
+@GrpcGlobalServerInterceptor
 object GrpcExceptionHandlerInterceptor : ServerInterceptor {
 
     override fun <ReqT : Any, RespT : Any> interceptCall(

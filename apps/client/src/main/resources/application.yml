@@ -1,15 +1,17 @@
 server:
     port: 8000
+
 grpc:
-    host: "127.0.0.1"
-    port: 8081
+    client:
+        grpc-server:
+            negotiation-type: plaintext
+            enable-keep-alive: true
+            keep-alive-without-calls: true
+            address: 'static://127.0.0.1:8081'
+
 spring:
     application:
         name: grpc-client
-    zipkin:
-        base-url: http://localhost:9411
-        service:
-            name: grpc-client
     sleuth:
         enabled: true
         baggage:
@@ -19,15 +21,7 @@ spring:
                 - X-USER-ID
             correlation-fields:
                 - X-USER-ID
-#        feign:
-#            processor:
-#                enabled: true
-#        http:
-#            enabled: true
-#        web:
-#            enabled: true
-#        grpc:
-#            enabled: true
+                -
 feign:
     client:
         config:

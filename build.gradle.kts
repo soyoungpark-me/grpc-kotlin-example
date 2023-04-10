@@ -69,8 +69,8 @@ subprojects {
 	}
 	dependencies {
 		implementation("org.jetbrains.kotlin:kotlin-reflect")
-		implementation("org.springframework.cloud:spring-cloud-sleuth-zipkin")
 		implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
+		implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
 	}
 
 	tasks.withType<KotlinCompile> {
